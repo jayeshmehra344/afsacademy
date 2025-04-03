@@ -1,4 +1,4 @@
-
+import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -65,7 +65,7 @@ const Coaches = () => {
       bio: "Former WNBA star with expertise in fundamentals and skills training. Known for transforming average players into exceptional athletes.",
       experience: "12 years",
       specialties: ["Player Development", "Guard Skills", "Agility Training"],
-      image: "/media/no-image.jpg",
+      image: "/media/abhishek_bohra.jpg",
       achievements: ["WNBA All-Star (2006-2009)", "Olympic Gold Medalist"]
     },
     {
@@ -75,7 +75,7 @@ const Coaches = () => {
       bio: "Specialized in youth basketball with a focus on proper technique and fundamental skill building in a fun, engaging environment.",
       experience: "8 years",
       specialties: ["Youth Fundamentals", "Basketball IQ", "Team Dynamics"],
-      image: "/media/no-image.jpg",
+      image: "/media/abhishek_gupta.jpg",
       achievements: ["Youth Coach of the Year (2019)", "State Championship Coach (2018)"]
     },
     {
@@ -85,7 +85,7 @@ const Coaches = () => {
       bio: "Certified strength coach with background in sports science. Creates custom training programs to enhance athletic performance.",
       experience: "10 years",
       specialties: ["Strength Training", "Injury Prevention", "Athletic Performance"],
-      image: "/media/no-image.jpg",
+      image: "/media/adnan.jpg",
       achievements: ["Certified Strength & Conditioning Specialist", "Master's in Sports Science"]
     },
     {
@@ -95,53 +95,54 @@ const Coaches = () => {
       bio: "Former collegiate defensive player of the year with expertise in teaching lockdown defensive techniques and team defensive strategies.",
       experience: "9 years",
       specialties: ["Defensive Footwork", "Positioning", "Team Defense"],
-      image: "/media/no-image.jpg",
+      image: "/media/amit_chaud.jpg",
       achievements: ["Defensive Coach of the Year (2017)", "NCAA Final Four Coach"]
     },
     {
       id: 6,
       name: "Devesh",
-      role: "Performance Analytics",
+      role: "Coach",
       bio: "Sports analytics expert who combines data analysis with practical basketball training to optimize player development.",
       experience: "7 years",
       specialties: ["Data Analysis", "Performance Metrics", "Skill Optimization"],
-      image: "/media/no-image.jpg",
+      image: "/media/devesh.jpg",
       achievements: ["Sports Analytics Innovation Award", "Published Basketball Researcher"]
     },
     {
       id: 7,
       name: "Shashwat",
-      role: "Mental Performance Coach",
+      role: "Coach",
       bio: "Sports psychologist specializing in basketball mental performance, focus training, and competitive mindset development.",
       experience: "11 years",
       specialties: ["Mental Toughness", "Focus Training", "Game Preparation"],
-      image: "/media/no-image.jpg",
+      image: "/media/shashwat.jpg",
       achievements: ["Sports Psychology Certification", "Author of 'Mind of a Champion'"]
     },
     {
       id: 8,
       name: "Aditya Raj",
-      role: "Ball Handling Specialist",
+      role: "Coach",
       bio: "Former streetball champion known for incredible ball handling skills, now teaching advanced dribbling and ball control techniques.",
       experience: "14 years",
       specialties: ["Advanced Dribbling", "Ball Control", "Creativity Development"],
-      image: "/media/no-image.jpg",
+      image: "/media/aditya.jpg",
       achievements: ["Streetball World Champion", "Global Basketball Camp Director"]
     },
     {
       id: 9,
-      name: "Praveen",
-      role: "Transition Game Coach",
-      bio: "Expert in fast break offense and transition defense with experience coaching at the professional level overseas.",
-      experience: "13 years",
-      specialties: ["Fast Break Offense", "Transition Defense", "Tempo Control"],
-      image: "/media/no-image.jpg",
-      achievements: ["European Championship Assistant Coach", "Fast Break Strategy Innovator"]
+      name: "Uttam Tewari",
+      role: "Coach",
+      bio: "Three-point specialist with a perfect shooting form, now teaching advanced shooting mechanics and consistency training.",
+      experience: "10 years",
+      specialties: ["Shooting Form", "Three-Point Shooting", "Free Throws"],
+      image: "/media/uttam.jpg",
+      achievements: ["Shooting Percentage Record Holder", "Shooting Clinic Director"]
+      
     },
     {
       id: 10,
       name: "Shubham Singh",
-      role: "Post Play Development",
+      role: "Coach",
       bio: "Former professional center who specializes in teaching post moves, footwork, and inside scoring techniques.",
       experience: "16 years",
       specialties: ["Post Moves", "Footwork", "Inside Scoring"],
@@ -150,18 +151,18 @@ const Coaches = () => {
     },
     {
       id: 11,
-      name: "Uttam Tewari",
-      role: "Shooting Coach",
-      bio: "Three-point specialist with a perfect shooting form, now teaching advanced shooting mechanics and consistency training.",
-      experience: "10 years",
-      specialties: ["Shooting Form", "Three-Point Shooting", "Free Throws"],
+      name: "Praveen",
+      role: "Coach",
+      bio: "Expert in fast break offense and transition defense with experience coaching at the professional level overseas.",
+      experience: "13 years",
+      specialties: ["Fast Break Offense", "Transition Defense", "Tempo Control"],
       image: "/media/no-image.jpg",
-      achievements: ["Shooting Percentage Record Holder", "Shooting Clinic Director"]
+      achievements: ["European Championship Assistant Coach", "Fast Break Strategy Innovator"]
     },
     {
       id: 12,
       name: "Vikas Pal",
-      role: "International Skills Coach",
+      role: "Coach",
       bio: "Brings global basketball perspective having played professionally in Europe, Asia and South America, specializing in international style of play.",
       experience: "12 years",
       specialties: ["International Tactics", "Global Playing Styles", "Versatility Training"],
@@ -171,7 +172,7 @@ const Coaches = () => {
     {
       id: 13,
       name: "Yash Thapa",
-      role: "International Skills Coach",
+      role: "Coach",
       bio: "Brings global basketball perspective having played professionally in Europe, Asia and South America, specializing in international style of play.",
       experience: "12 years",
       specialties: ["International Tactics", "Global Playing Styles", "Versatility Training"],
@@ -181,7 +182,7 @@ const Coaches = () => {
     {
       id: 14,
       name: "Vivek Yadav",
-      role: "International Skills Coach",
+      role: "Coach",
       bio: "Brings global basketball perspective having played professionally in Europe, Asia and South America, specializing in international style of play.",
       experience: "12 years",
       specialties: ["International Tactics", "Global Playing Styles", "Versatility Training"],
@@ -235,43 +236,7 @@ const Coaches = () => {
                   </div>
                 </HoverCardTrigger>
                 
-                <HoverCardContent className="w-96 glass-card border border-white/10 text-white animate-fade-in p-6">
-                  <div>
-                    <h3 className="text-2xl font-bold mb-2">{coach.name}</h3>
-                    <p className="text-afs-orange mb-4">{coach.role}</p>
-                    <p className="text-white/80 mb-6">{coach.bio}</p>
-                    
-                    <div className="flex items-center mb-3">
-                      <Trophy size={18} className="text-afs-orange mr-2" />
-                      <span className="text-white/80">Experience: {coach.experience}</span>
-                    </div>
-                    
-                    <h4 className="text-lg font-bold mb-2">Specialties:</h4>
-                    <ul className="space-y-1 mb-6">
-                      {coach.specialties.map((specialty, index) => (
-                        <li key={index} className="flex items-start">
-                          <Star size={16} className="text-afs-orange mr-2 mt-1 flex-shrink-0" />
-                          <span className="text-white/80">{specialty}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    
-                    <h4 className="text-lg font-bold mb-2">Achievements:</h4>
-                    <ul className="space-y-1">
-                      {coach.achievements.map((achievement, index) => (
-                        <li key={index} className="flex items-start">
-                          <Award size={16} className="text-afs-orange mr-2 mt-1 flex-shrink-0" />
-                          <span className="text-white/80">{achievement}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <button className="btn-primary mt-6 w-full">
-                    <Users size={18} />
-                    <span>Schedule Training</span>
-                  </button>
-                </HoverCardContent>
+                
               </HoverCard>
             ))}
           </div>
@@ -302,9 +267,9 @@ const Coaches = () => {
                 developing young basketball talent. If you have a background in basketball 
                 and a desire to help players improve, we'd love to hear from you.
               </p>
-              <button className="btn-primary">
-                Apply to Coach
-              </button>
+              <Link to="/contact" className="btn-primary">
+  Apply to Coach
+</Link>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-
+import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -13,40 +13,41 @@ interface ProgramCardProps {
   image: string;
 }
 
-// Integrated ProgramCard component directly in the page file
 const ProgramCard = ({ title, description, level, duration, image }: ProgramCardProps) => {
   return (
-    <div className="overflow-hidden rounded-xl relative group glass-card animate-fade-in">
-      <div className="aspect-video w-full overflow-hidden">
+    <div className="overflow-hidden rounded-xl relative group glass-card animate-fade-in h-full flex flex-col transition-all duration-300 hover:-translate-y-2">
+      <div className="aspect-[4/3] w-full overflow-hidden flex-shrink-0">
         <img 
           src={image} 
           alt={title} 
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-afs-dark/90 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-afs-dark/90 via-transparent to-transparent"></div>
       </div>
       
-      <div className="p-6 relative z-10">
-        <div className="flex justify-between items-start mb-3">
-          <h3 className="text-white">{title}</h3>
-          <span className="text-xs py-1 px-3 rounded-full uppercase tracking-wider bg-afs-orange/30 text-white border border-afs-orange/20">
+      <div className="p-6 relative z-10 flex-grow flex flex-col">
+        <div className="flex justify-between items-start mb-3 gap-2">
+          <h3 className="text-white text-lg font-medium">{title}</h3>
+          <span className="text-xs py-1 px-3 rounded-full uppercase tracking-wider bg-afs-orange/30 text-white border border-afs-orange/20 flex-shrink-0">
             {level}
           </span>
         </div>
         
-        <p className="text-white/80 mb-4 text-sm">
+        <p className="text-white/80 mb-4 text-sm flex-grow">
           {description}
         </p>
         
-        <div className="flex justify-between items-center">
-          <span className="text-white/60 text-sm">
+        <div className="flex justify-between items-center mt-auto">
+          <span className="text-white/60 text-xs sm:text-sm">
             {duration}
           </span>
-          
-          <button className="flex items-center text-afs-orange hover:text-white transition-colors group/btn">
+          <Link 
+            to="/contact" 
+            className="flex items-center text-afs-orange hover:text-white transition-colors group/btn text-sm sm:text-base"
+          >
             <span>Enroll Now</span>
-            <ArrowRight size={18} className="ml-2 transition-transform duration-300 group-hover/btn:translate-x-1" />
-          </button>
+            <ArrowRight size={16} className="ml-1 sm:ml-2 transition-transform duration-300 group-hover/btn:translate-x-1" />
+          </Link>
         </div>
       </div>
     </div>
@@ -58,10 +59,8 @@ const Programs = () => {
   const [isVisible, setIsVisible] = useState(false);
   
   useEffect(() => {
-    // Make elements visible immediately on component mount
     setIsVisible(true);
     
-    // Add observer for scroll animations
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -73,13 +72,11 @@ const Programs = () => {
       { threshold: 0.1 }
     );
     
-    // Observe all elements with the 'reveal' class
     document.querySelectorAll('.reveal').forEach((element) => {
       observer.observe(element);
     });
     
     return () => {
-      // Clean up observer
       document.querySelectorAll('.reveal').forEach((element) => {
         observer.unobserve(element);
       });
@@ -89,51 +86,51 @@ const Programs = () => {
   const programs = [
     {
       id: 1,
-      title: "Elite Skills Training",
-      description: "Intensive program focused on advanced skill development for serious players looking to compete at higher levels.",
-      level: "Advanced",
-      duration: "12 Weeks",
-      image: "/images/program-elite.jpg"
+      title: "Beginner Training Program",
+      description: "Foundational basketball skills and fundamentals for young players just starting their basketball journey.",
+      level: "Beginner",
+      duration: "Ongoing batches",
+      image: "/media/junior.jpg"
     },
     {
       id: 2,
-      title: "Youth Development",
-      description: "Foundational basketball skills and fundamentals for young players ages 8-14, focusing on proper technique and basketball IQ.",
-      level: "Beginner",
-      duration: "10 Weeks",
-      image: "/images/program-youth.jpg"
+      title: "Intermediate Training Program ",
+      description: "Develops core basketball skills - shooting technique, defensive stance, and team play fundamentals",
+      level: "Intermediate",
+      duration: "Regular sessions",
+      image: "/media/sub-junior.jpg"
     },
     {
       id: 3,
-      title: "College Prep Academy",
-      description: "Comprehensive training program designed to prepare high school athletes for college basketball with position-specific training.",
+      title: "Advanced Training Program ",
+      description: "Comprehensive skill development program focusing on advanced techniques, strategies, competitive preparation for serious players",
       level: "Advanced",
-      duration: "16 Weeks",
-      image: "/images/program-college.jpg"
+      duration: "Year-round program", 
+      image: "/media/senior.jpg"
     },
     {
       id: 4,
-      title: "Pro Skills Workshop",
-      description: "Specialized training focusing on professional-level skills and techniques taught by former NBA players and coaches.",
+      title: "Professional Training Program",
+      description: "For competitive players seeking highest-level coaching with advanced drills, game simulations and athletic conditioning",
       level: "Expert",
-      duration: "8 Weeks",
-      image: "/images/program-pro.jpg"
+      duration: "Regular Sessions",
+      image: "/media/expert.jpg"
     },
     {
       id: 5,
-      title: "Summer Intensive Camp",
-      description: "Full-day summer camp offering comprehensive basketball training, team play, and competitive games for all skill levels.",
-      level: "Intermediate",
-      duration: "4 Weeks",
-      image: "/images/program-summer.jpg"
+      title: "Summer Basketball Camp",
+      description: "Daily skill-building activities, drills, and scrimmages for all age groups during summer vacations",
+      level: "All Levels",
+      duration: "June-July",
+      image: "/media/camp.jpg"
     },
     {
       id: 6,
-      title: "Shooting Fundamentals",
-      description: "Specialized program focusing exclusively on shooting mechanics, form, and consistency for players wanting to improve scoring.",
-      level: "Beginner",
-      duration: "6 Weeks",
-      image: "/images/program-shooting.jpg"
+      title: "Personal Coaching",
+      description: "One-on-one customized training sessions focusing on individual skill improvement",
+      level: "All Levels",
+      duration: "Flexible scheduling",
+      image: "/media/personal1.png"
     }
   ];
 
@@ -146,58 +143,58 @@ const Programs = () => {
       <Navbar />
       
       <div className="pt-24 pb-20">
-        <div className="container mx-auto px-4">
-          <div className={`text-center mb-16 reveal ${isVisible ? 'animated' : ''}`}>
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className={`text-center mb-12 sm:mb-16 reveal ${isVisible ? 'animated' : ''}`}>
             <span className="inline-block py-1 px-3 rounded-full text-xs uppercase tracking-wider mb-3 bg-afs-orange/20 text-afs-orange border border-afs-orange/10">
               Training Programs
             </span>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 afs-heading">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 afs-heading">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-afs-orange to-afs-red">
                 Elevate
               </span>{" "}
               Your Game
             </h1>
-            <p className="text-white/70 max-w-2xl mx-auto">
+            <p className="text-white/70 max-w-2xl mx-auto text-sm sm:text-base">
               Choose from our comprehensive selection of basketball training programs, 
               each designed to target specific skills and tailored for different experience levels.
             </p>
           </div>
           
-          <Tabs defaultValue="all" className={`mb-12 reveal ${isVisible ? 'animated' : ''}`}>
-            <div className="flex justify-center">
-              <TabsList className="bg-white/5 border border-white/10">
+          <Tabs defaultValue="all" className={`mb-8 sm:mb-12 reveal ${isVisible ? 'animated' : ''}`}>
+            <div className="flex justify-center overflow-x-auto pb-2">
+              <TabsList className="bg-white/5 border border-white/10 w-max">
                 <TabsTrigger 
                   value="all" 
                   onClick={() => setSelectedLevel("all")}
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-afs-orange data-[state=active]:to-afs-red"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-afs-orange data-[state=active]:to-afs-red text-xs sm:text-sm"
                 >
                   All Programs
                 </TabsTrigger>
                 <TabsTrigger 
                   value="beginner" 
                   onClick={() => setSelectedLevel("beginner")}
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-afs-orange data-[state=active]:to-afs-red"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-afs-orange data-[state=active]:to-afs-red text-xs sm:text-sm"
                 >
                   Beginner
                 </TabsTrigger>
                 <TabsTrigger 
                   value="intermediate" 
                   onClick={() => setSelectedLevel("intermediate")}
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-afs-orange data-[state=active]:to-afs-red"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-afs-orange data-[state=active]:to-afs-red text-xs sm:text-sm"
                 >
                   Intermediate
                 </TabsTrigger>
                 <TabsTrigger 
                   value="advanced" 
                   onClick={() => setSelectedLevel("advanced")}
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-afs-orange data-[state=active]:to-afs-red"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-afs-orange data-[state=active]:to-afs-red text-xs sm:text-sm"
                 >
                   Advanced
                 </TabsTrigger>
                 <TabsTrigger 
                   value="expert" 
                   onClick={() => setSelectedLevel("expert")}
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-afs-orange data-[state=active]:to-afs-red"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-afs-orange data-[state=active]:to-afs-red text-xs sm:text-sm"
                 >
                   Expert
                 </TabsTrigger>
@@ -205,8 +202,8 @@ const Programs = () => {
             </div>
             
             {["all", "beginner", "intermediate", "advanced", "expert"].map((level) => (
-              <TabsContent key={level} value={level} className="mt-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <TabsContent key={level} value={level} className="mt-6 sm:mt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                   {filteredPrograms.map((program) => (
                     <ProgramCard 
                       key={program.id}
@@ -222,16 +219,16 @@ const Programs = () => {
             ))}
           </Tabs>
 
-          <div className={`mt-16 text-center reveal ${isVisible ? 'animated' : ''}`}>
-            <div className="max-w-3xl mx-auto bg-white/5 border border-white/10 rounded-xl p-8">
-              <h3 className="text-2xl font-bold mb-4">Not sure which program is right for you?</h3>
-              <p className="text-white/70 mb-6">
+          <div className={`mt-12 sm:mt-16 text-center reveal ${isVisible ? 'animated' : ''}`}>
+            <div className="max-w-3xl mx-auto bg-white/5 border border-white/10 rounded-xl p-6 sm:p-8">
+              <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Not sure which program is right for you?</h3>
+              <p className="text-white/70 mb-4 sm:mb-6 text-sm sm:text-base">
                 Our expert coaches can help assess your current skill level and recommend 
                 the perfect training program to match your goals and abilities.
               </p>
-              <button className="btn-primary">
+              <Link to="/contact" className="btn-primary inline-flex">
                 Schedule a Free Assessment
-              </button>
+              </Link>
             </div>
           </div>
         </div>

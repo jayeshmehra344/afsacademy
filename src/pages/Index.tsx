@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import Navbar from "../components/Navbar";
 import VideoHero from "../components/VideoHero";
 import Footer from "../components/Footer";
@@ -17,24 +18,24 @@ const Index = () => {
   // Program data
   const programs = [
     {
-      title: "Junior Training Program",
+      title: "Beginner Training Program",
       description: "Foundational basketball skills and fundamentals for young players just starting their basketball journey.",
       level: "Beginner",
-      duration: "8 Weeks",
+      duration: "Ongoing batches",
       image: "/media/junior.jpg"
     },
     {
-      title: "Sub-Junior Training Program",
-      description: "Specialized training to help high school players prepare for college basketball tryouts and scholarships.",
+      title: "Intermediate Training Program",
+      description: "Develops core basketball skills - shooting technique, defensive stance, and team play fundamentals",
       level: "Intermediate",
-      duration: "16 Weeks",
+      duration: "Regular sessions",
       image: "/media/sub-junior.jpg"
     },
     {
-      title: "Senior Training Program",
-      description: "Advanced skills development for serious players looking to take their game to the professional level.",
+      title: "Advanced Training Program",
+      description: "Comprehensive skill development program focusing on advanced techniques, strategies, competitive preparation for serious players",
       level: "Advanced",
-      duration: "12 Weeks",
+      duration: "Year-round program",
       image: "/media/senior.jpg"
     },
   ];
@@ -126,10 +127,7 @@ const Index = () => {
               <span className="text-white">{duration}</span>
             </div>
           </div>
-          <button className="btn-primary w-full flex items-center justify-center">
-            Learn More
-            <ChevronRight size={18} />
-          </button>
+          
         </div>
       </div>
     );
@@ -180,7 +178,7 @@ const Index = () => {
         image: "/media/navya.jpg"
       },
       {
-        name: "Sarah Johnson",
+        name: "Shubham Singh",
         role: "National Player",
         text: "Training with AFS Academy was the turning point in my career. Their elite coaching staff pushed me to levels I didn't think were possible.",
         image: "/media/Shubham_singh.jpg"
@@ -298,10 +296,11 @@ const Index = () => {
               <p className="text-white/80 mb-8">
                 We focus on developing the complete player - from technical skills and basketball IQ to mental strength and physical conditioning. Our proven track record includes helping players reach collegiate and professional levels.
               </p>
-              <button className="btn-primary flex items-center">
-                Learn More About Us
-                <ChevronRight size={18} className="ml-1" />
-              </button>
+              
+              <Link to="/achievements" className="btn-primary flex items-center">
+              Learn More About Us
+              <ChevronRight size={18} className="ml-1" />
+              </Link>
             </div>
             
             <div className="relative reveal">
@@ -344,14 +343,16 @@ const Index = () => {
               <div key={index} className="reveal">
                 <ProgramCard {...program} />
               </div>
+              
             ))}
           </div>
           
           <div className="text-center reveal">
-            <button className="btn-secondary inline-flex items-center">
+            
+            <Link to="/programs" className="btn-secondary inline-flex items-center">
               <span>View All Programs</span>
               <ArrowRight size={18} className="ml-2" />
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -383,14 +384,10 @@ const Index = () => {
                 Join AFS Academy today and start your journey to basketball excellence. Limited spots available for our elite training programs.
               </p>
               <div className="flex flex-wrap gap-4 ml-26">
-                <button className="btn-primary flex items-center">
+                <Link to="/contact" className="btn-primary flex items-center">
                   <CircleDot className="mr-2" size={20} />
                   Enroll Now
-                </button>
-                <button className="btn-secondary flex items-center">
-                  <ArrowRight className="mr-2" size={20} />
-                  Schedule Tour
-                </button>
+              </Link> 
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-
+import {Link} from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { ArrowDown, CircleDot, Award, TrendingUp } from 'lucide-react';
 
@@ -54,14 +54,15 @@ const VideoHero = () => {
         </p>
         
         <div className="space-x-4 flex flex-wrap justify-center gap-4">
-          <button className="btn-primary flex items-center">
-            <CircleDot className="mr-2" size={20} />
+          <Link to="/programs" className="btn-primary flex items-center">
+          <CircleDot className="mr-2" size={20} />
             Explore Programs
-          </button>
-          <button className="btn-secondary flex items-center">
-            <Award className="mr-2" size={20} />
+          </Link>
+          
+          <Link to="/coaches" className="btn-secondary flex items-center">
+          <CircleDot className="mr-2" size={20} />
             Meet Our Coaches
-          </button>
+          </Link>
         </div>
         
         {/* Basketball Stats Quick View */}

@@ -63,7 +63,7 @@ const Achievements = () => {
       title: "Navya Singh's Journey!",
       description: "Navya Singh has been consistently representing the *U.P. team* and even secured a spot in the *Under-17 Indian team tryouts*. A true inspiration for all young athletes!",
       image: "/media/navya_02.jpg",
-      category: "Alumni Success"
+      category: "Success Stories"
     },
     {
       id: 7,
