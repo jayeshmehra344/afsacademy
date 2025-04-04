@@ -5,9 +5,22 @@ import VideoHero from "../components/VideoHero";
 import Footer from "../components/Footer";
 import VideoSlideshow from "../components/VideoSlideshow";
 import { ArrowRight, ArrowDown, CircleDot, Award, Trophy, Star, TrendingUp, ChevronRight, Users, User, Clock, ArrowLeft } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import emailjs from '@emailjs/browser';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Index = () => {
-  // Stats data
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: ""
+  });
+
   const stats = [
     { value: "1,500+", label: "Players Trained", icon: <Users className="text-afs-orange" size={24} /> },
     { value: "14+", label: "Professional Coaches", icon: <User className="text-afs-orange" size={24} /> },
@@ -15,7 +28,6 @@ const Index = () => {
     { value: "12+", label: "Years Experience", icon: <Trophy className="text-afs-orange" size={24} /> },
   ];
 
-  // Program data
   const programs = [
     {
       title: "Beginner Training Program",
@@ -40,7 +52,6 @@ const Index = () => {
     },
   ];
 
-  // Coach data
   const coaches = [
     {
       name: "Ashwani Kumar Gupta",
@@ -50,7 +61,7 @@ const Index = () => {
       achievements: [
         "Senior National Player",
         "All India University, Khelo India Games Participant",
-        "Certified Basketball Coach (NSNIS Bangalore)  ",
+        "Certified Basketball Coach (NSNIS Bangalore)",
         "Certified Personal and Fitness Trainer",
         "B.P.Ed, M.P.Ed"
       ]
@@ -77,33 +88,86 @@ const Index = () => {
     }
   ];
 
-  // Fix for animations - use a class-based approach
   useEffect(() => {
     const animateElements = () => {
       const revealElements = document.querySelectorAll('.reveal:not(.animated)');
-      
       revealElements.forEach(element => {
         const elementTop = element.getBoundingClientRect().top;
         const elementVisible = 150;
-        
         if (elementTop < window.innerHeight - elementVisible) {
           element.classList.add('animated');
         }
       });
     };
-
-    // Run once immediately to show elements already in viewport
     animateElements();
-    
-    // Add scroll event listener
     window.addEventListener('scroll', animateElements);
-    
     return () => {
       window.removeEventListener('scroll', animateElements);
     };
   }, []);
-  
-  // Program Card Component integrated directly
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+    if (!formData.subject.trim()) newErrors.subject = "Subject is required";
+    if (!formData.message.trim()) newErrors.message = "Message is required";
+    if (!recaptchaValue) newErrors.recaptcha = "Please verify you're not a robot";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm() || isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          'g-recaptcha-response': recaptchaValue
+        },
+        import.meta.env.VITE_EMAILJS_USER_ID
+      );
+
+      toast({
+        title: "Message sent!",
+        description: "We'll get back to you within 24 hours.",
+      });
+
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: ""
+      });
+      setRecaptchaValue(null);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
   const ProgramCard = ({ title, description, level, duration, image }) => {
     return (
       <div className="glass-card rounded-xl overflow-hidden card-hover h-full">
@@ -127,13 +191,11 @@ const Index = () => {
               <span className="text-white">{duration}</span>
             </div>
           </div>
-          
         </div>
       </div>
     );
   };
   
-  // Coach Card Component integrated directly
   const CoachCard = ({ name, title, bio, image, achievements }) => {
     return (
       <div className="glass-card rounded-xl overflow-hidden h-full flex flex-col card-hover">
@@ -162,13 +224,11 @@ const Index = () => {
               ))}
             </ul>
           </div>
-          
         </div>
       </div>
     );
   };
   
-  // Testimonial Slider Component
   const TestimonialSlider = () => {
     const testimonials = [
       {
@@ -183,12 +243,6 @@ const Index = () => {
         text: "Training with AFS Academy was the turning point in my career. Their elite coaching staff pushed me to levels I didn't think were possible.",
         image: "/media/Shubham_singh.jpg"
       },
-      // {
-      //   name: "Jason Williams",
-      //   role: "High School Player",
-      //   text: "The coaches at AFS Academy don't just teach basketball skills, they instill confidence and mental toughness that translates beyond the court.",
-      //   image: "/images/testimonial-3.jpg"
-      // }
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -244,7 +298,6 @@ const Index = () => {
             </div>
           </div>
         </div>
-        
       </div>
     );
   };
@@ -252,14 +305,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-afs-dark text-white overflow-x-hidden font-montserrat">
       <Navbar />
-      
-      {/* Hero Section */}
       <VideoHero />
-      
-      {/* Video Slideshow Section - NEW SECTION */}
       <VideoSlideshow />
       
-      {/* Stats Section */}
       <section className="py-16 bg-gradient-to-b from-afs-dark to-afs-darkgray basketball-pattern">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
@@ -276,7 +324,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* About Section */}
       <section className="py-20 bg-afs-dark-accent">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -291,18 +338,16 @@ const Index = () => {
                 <span className="text-white">Elevate Your Game</span> To New Heights
               </h2>
               <p className="text-white/80 mb-6">
-                AFS Academy was founded by former professional players with a mission to develop elite basketball talent through personalized training and expert coaching. Our unique approach combines cutting-edge techniques with proven fundamentals.
+                AFS Academy was founded by former professional players with a mission to develop elite basketball talent through personalized training and expert coaching.
               </p>
               <p className="text-white/80 mb-8">
-                We focus on developing the complete player - from technical skills and basketball IQ to mental strength and physical conditioning. Our proven track record includes helping players reach collegiate and professional levels.
+                We focus on developing the complete player - from technical skills and basketball IQ to mental strength and physical conditioning.
               </p>
-              
               <Link to="/achievements" className="btn-primary flex items-center">
-              Learn More About Us
-              <ChevronRight size={18} className="ml-1" />
+                Learn More About Us
+                <ChevronRight size={18} className="ml-1" />
               </Link>
             </div>
-            
             <div className="relative reveal">
               <div className="rounded-xl overflow-hidden glass-card">
                 <img 
@@ -311,7 +356,6 @@ const Index = () => {
                   className="w-full h-full object-cover" 
                 />
               </div>
-              
               <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full flex items-center justify-center bg-afs-dark border-2 border-afs-orange">
                 <CircleDot className="text-afs-orange animate-ball-bounce" size={28} />
               </div>
@@ -320,7 +364,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Programs Section */}
       <section className="py-20 bg-afs-dark">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-12 reveal">
@@ -334,21 +377,17 @@ const Index = () => {
               <span className="text-white">Training Programs</span> Designed For Success
             </h2>
             <p className="text-white/80">
-              Choose from our specialized basketball training programs, each tailored to specific skill levels and goals. From beginners to elite players, we have the perfect program for your development.
+              Choose from our specialized basketball training programs, each tailored to specific skill levels and goals.
             </p>
           </div>
-          
           <div className="grid md:grid-cols-3 gap-6 mb-10">
             {programs.map((program, index) => (
               <div key={index} className="reveal">
                 <ProgramCard {...program} />
               </div>
-              
             ))}
           </div>
-          
           <div className="text-center reveal">
-            
             <Link to="/programs" className="btn-secondary inline-flex items-center">
               <span>View All Programs</span>
               <ArrowRight size={18} className="ml-2" />
@@ -357,7 +396,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* CTA Section */}
       <section className="relative py-24 bg-afs-dark-accent overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
@@ -368,7 +406,6 @@ const Index = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-afs-dark to-transparent"></div>
           <div className="absolute inset-0 basketball-pattern opacity-30"></div>
         </div>
-        
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
             <div className="reveal">
@@ -381,20 +418,19 @@ const Index = () => {
                 </h2>
               </div>
               <p className="text-xl text-white/80 mb-8 ml-26">
-                Join AFS Academy today and start your journey to basketball excellence. Limited spots available for our elite training programs.
+                Join AFS Academy today and start your journey to basketball excellence.
               </p>
               <div className="flex flex-wrap gap-4 ml-26">
                 <Link to="/contact" className="btn-primary flex items-center">
                   <CircleDot className="mr-2" size={20} />
                   Enroll Now
-              </Link> 
+                </Link> 
               </div>
             </div>
           </div>
         </div>
       </section>
       
-      {/* Coaches Section */}
       <section className="py-20 bg-afs-dark basketball-pattern">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-12 reveal">
@@ -408,10 +444,9 @@ const Index = () => {
               <span className="text-white">Expert Coaches</span> Leading The Way
             </h2>
             <p className="text-white/80">
-              Our coaching staff consists of former professional players and certified trainers with years of experience developing basketball talent at all levels.
+              Our coaching staff consists of former professional players and certified trainers.
             </p>
           </div>
-          
           <div className="grid md:grid-cols-3 gap-8">
             {coaches.map((coach, index) => (
               <div key={index} className="reveal">
@@ -422,7 +457,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Testimonials Section */}
       <section className="py-20 bg-gradient-to-b from-afs-dark-accent to-afs-dark">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-12 reveal">
@@ -436,17 +470,15 @@ const Index = () => {
               <span className="text-white">Success Stories</span> From Our Players
             </h2>
             <p className="text-white/80">
-              Hear what our players have to say about their experience training with AFS Academy and how it transformed their basketball careers.
+              Hear what our players have to say about their experience training with AFS Academy.
             </p>
           </div>
-          
           <div className="reveal">
             <TestimonialSlider />
           </div>
         </div>
       </section>
       
-      {/* Contact Form */}
       <section className="py-20 bg-afs-dark-accent">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12">
@@ -461,9 +493,8 @@ const Index = () => {
                 <span className="text-white">Questions?</span> Contact Us
               </h2>
               <p className="text-white/80 mb-8">
-                Have questions about our programs or want to schedule a visit? Fill out the form and one of our team members will get back to you within 24 hours.
+                Have questions about our programs or want to schedule a visit? Fill out the form and we'll get back to you.
               </p>
-              
               <div className="space-y-4 mb-6">
                 <div className="flex items-start">
                   <div className="w-10 h-10 rounded-full bg-afs-orange/20 flex items-center justify-center mr-4 flex-shrink-0">
@@ -477,7 +508,6 @@ const Index = () => {
                     <p className="text-white/70 text-sm">1st Floor Terrace Area Sky Line Plaza-1, Sushant Golf City, Behind Lulu Mall (Gate-5), Lucknow</p>
                   </div>
                 </div>
-                
                 <div className="flex items-start">
                   <div className="w-10 h-10 rounded-full bg-afs-orange/20 flex items-center justify-center mr-4 flex-shrink-0">
                     <svg className="w-5 h-5 text-afs-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -489,7 +519,6 @@ const Index = () => {
                     <p className="text-white/70 text-sm">afstrainingacademy@gmail.com</p>
                   </div>
                 </div>
-                
                 <div className="flex items-start">
                   <div className="w-10 h-10 rounded-full bg-afs-orange/20 flex items-center justify-center mr-4 flex-shrink-0">
                     <svg className="w-5 h-5 text-afs-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -506,48 +535,84 @@ const Index = () => {
             
             <div className="reveal">
               <div className="glass-card rounded-xl p-6 md:p-8">
-                <form className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-white/80 text-sm mb-2 font-russo">Full Name</label>
+                      <label className="block text-white/80 text-sm mb-2 font-russo">Full Name *</label>
                       <input 
                         type="text" 
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-afs-orange/50 text-white font-montserrat"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        className={`w-full bg-white/5 border ${errors.name ? 'border-red-500' : 'border-white/10'} rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-afs-orange/50 text-white font-montserrat`}
                         placeholder="Your name"
                       />
+                      {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                     </div>
                     <div>
-                      <label className="block text-white/80 text-sm mb-2 font-russo">Email Address</label>
+                      <label className="block text-white/80 text-sm mb-2 font-russo">Email Address *</label>
                       <input 
                         type="email" 
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-afs-orange/50 text-white font-montserrat"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className={`w-full bg-white/5 border ${errors.email ? 'border-red-500' : 'border-white/10'} rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-afs-orange/50 text-white font-montserrat`}
                         placeholder="Your email"
                       />
+                      {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                     </div>
                   </div>
-                  
                   <div>
-                    <label className="block text-white/80 text-sm mb-2 font-russo">Subject</label>
+                    <label className="block text-white/80 text-sm mb-2 font-russo">Subject *</label>
                     <input 
                       type="text" 
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-afs-orange/50 text-white font-montserrat"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      className={`w-full bg-white/5 border ${errors.subject ? 'border-red-500' : 'border-white/10'} rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-afs-orange/50 text-white font-montserrat`}
                       placeholder="How can we help you?"
                     />
+                    {errors.subject && <p className="text-red-500 text-xs mt-1">{errors.subject}</p>}
                   </div>
-                  
                   <div>
-                    <label className="block text-white/80 text-sm mb-2 font-russo">Message</label>
+                    <label className="block text-white/80 text-sm mb-2 font-russo">Message *</label>
                     <textarea 
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-afs-orange/50 text-white font-montserrat h-32"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      className={`w-full bg-white/5 border ${errors.message ? 'border-red-500' : 'border-white/10'} rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-afs-orange/50 text-white font-montserrat h-32`}
                       placeholder="Tell us more about your inquiry"
                     ></textarea>
+                    {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
                   </div>
-                  
-                  <button type="submit" className="btn-primary w-full flex items-center justify-center">
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                    </svg>
-                    Send Message
+                  <div>
+                    <ReCAPTCHA
+                      sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                      onChange={(value) => setRecaptchaValue(value)}
+                    />
+                    {errors.recaptcha && <p className="text-red-500 text-xs mt-1">{errors.recaptcha}</p>}
+                  </div>
+                  <button 
+                    type="submit" 
+                    className="btn-primary w-full flex items-center justify-center"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                        Send Message
+                      </>
+                    )}
                   </button>
                 </form>
               </div>
