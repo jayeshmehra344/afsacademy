@@ -264,13 +264,13 @@ const Contact = () => {
                     />
                   </div>
                   <div>
-                    <label htmlFor="subject" className="block text-white/70 mb-2">Subject *</label>
+                    <label htmlFor="subject" className="block text-black/70 mb-2">Subject *</label>
                     <select
                       id="subject"
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className={`w-full bg-white/5 border ${errors.subject ? 'border-red-500' : 'border-white/10'} rounded-lg px-4 py-3 text-white`}
+                      className={`w-full bg-white/5 border ${errors.subject ? 'border-red-500' : 'border-white/10'} rounded-lg px-4 py-3 text-orange-400`}
                     >
                       <option value="" disabled>Select a subject</option>
                       <option value="Program Inquiry">Program Inquiry</option>
