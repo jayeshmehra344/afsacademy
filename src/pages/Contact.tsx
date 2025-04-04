@@ -264,7 +264,7 @@ const Contact = () => {
                     />
                   </div>
                   <div>
-                    <label htmlFor="subject" className="block text-black/70 mb-2">Subject *</label>
+                    <label htmlFor="subject" className="block text-white/70 mb-2">Subject *</label>
                     <select
                       id="subject"
                       name="subject"
@@ -349,7 +349,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Email Address</h3>
-                    <p className="text-white/70">contact@afsacademy.com</p>
+                    <p className="text-white/70">afstrainingacademy@gmail.com</p>
                   </div>
                 </div>
                 <div className="flex items-start">
