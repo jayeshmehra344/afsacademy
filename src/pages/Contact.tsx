@@ -143,31 +143,72 @@ const Contact = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!validateForm() || isSubmitting) return;
+    
+  //   setIsSubmitting(true);
+  
+  //   try {
+  //     const response = await fetch('/api/send-email', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ ...formData, recaptcha: recaptchaValue }),
+  //     });
+  
+  //     if (!response.ok) {
+  //       const errorData = await response.json();
+  //       throw new Error(errorData.message || 'Submission failed');
+  //     }
+  
+  //     // Success handling
+  //     toast({
+  //       title: "Message sent!",
+  //       description: "We'll respond within 24 hours.",
+  //     });
+  
+  //     // Reset form
+  //     setFormData({
+  //       name: "",
+  //       email: "",
+  //       phone: "",
+  //       subject: "",
+  //       message: ""
+  //     });
+  //     setRecaptchaValue(null);
+  
+  //   } catch (err) {
+  //     toast({
+  //       title: "Error",
+  //       description: err instanceof Error ? err.message : "Request failed",
+  //       variant: "destructive"
+  //     });
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm() || isSubmitting) return;
+  
     setIsSubmitting(true);
-
+  
     try {
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          phone_number: formData.phone,
-          subject: formData.subject,
-          message: formData.message,
-          'g-recaptcha-response': recaptchaValue
-        },
-        import.meta.env.VITE_EMAILJS_USER_ID
-      );
-
-      toast({
-        title: "Message sent!",
-        description: "We'll get back to you within 24 hours.",
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, recaptcha: recaptchaValue }),
       });
-
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Request failed');
+      }
+  
+      toast({ title: "Success!", description: "Message sent successfully" });
+  
       setFormData({
         name: "",
         email: "",
@@ -176,16 +217,20 @@ const Contact = () => {
         message: ""
       });
       setRecaptchaValue(null);
-    } catch (error) {
+  
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to send message. Please try again later.",
-        variant: "destructive"
+        description: error.message || "Failed to send message",
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
+  
+  
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
