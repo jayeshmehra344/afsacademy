@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { MapPin, Phone, Mail, Clock, Send, MessageSquare, Calendar, Loader2 } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, MessageSquare, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import emailjs from '@emailjs/browser';
-import ReCAPTCHA from "react-google-recaptcha";
 
 interface Location {
   position: {
@@ -18,17 +16,6 @@ interface Location {
 const Contact = () => {
   const { toast } = useToast();
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
-  
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: ""
-  });
 
   const locations: Location[] = [
     {
@@ -77,7 +64,6 @@ const Contact = () => {
     if (mapLoaded) return;
 
     const existingScript = document.querySelector(`script[src^="https://maps.googleapis.com/maps/api/js"]`);
-
     if (!existingScript) {
       const script = document.createElement('script');
       script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&libraries=places`;
@@ -128,70 +114,6 @@ const Contact = () => {
     initMap();
   }, [mapLoaded]);
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-    if (!formData.subject) newErrors.subject = "Subject is required";
-    if (!formData.message.trim()) newErrors.message = "Message is required";
-    if (!recaptchaValue) newErrors.recaptcha = "Please verify you're not a robot";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm() || isSubmitting) return;
-    setIsSubmitting(true);
-
-    try {
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          phone_number: formData.phone,
-          subject: formData.subject,
-          message: formData.message,
-          'g-recaptcha-response': recaptchaValue
-        },
-        import.meta.env.VITE_EMAILJS_USER_ID
-      );
-
-      toast({
-        title: "Message sent!",
-        description: "We'll get back to you within 24 hours.",
-      });
-
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: ""
-      });
-      setRecaptchaValue(null);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to send message. Please try again later.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
   const handleLiveChat = () => {
     toast({ title: "Live Chat", description: "Our chat service will open shortly..." });
   };
@@ -217,104 +139,12 @@ const Contact = () => {
               Our team is here to help you take the next step.
             </p>
           </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div className="glass-card rounded-xl p-8 order-2 lg:order-1">
-              <h2 className="text-2xl font-bold mb-6">Send us a message</h2>
-              <form onSubmit={handleSubmit}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <label htmlFor="name" className="block text-white/70 mb-2">Full Name *</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className={`w-full bg-white/5 border ${errors.name ? 'border-red-500' : 'border-white/10'} rounded-lg px-4 py-3 text-white`}
-                      placeholder="Your name"
-                    />
-                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-white/70 mb-2">Email Address *</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`w-full bg-white/5 border ${errors.email ? 'border-red-500' : 'border-white/10'} rounded-lg px-4 py-3 text-white`}
-                      placeholder="Your email"
-                    />
-                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <label htmlFor="phone" className="block text-white/70 mb-2">Phone Number</label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white"
-                      placeholder="Your phone"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="subject" className="block text-white/70 mb-2">Subject *</label>
-                    <select
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      className={`w-full bg-white/5 border ${errors.subject ? 'border-red-500' : 'border-white/10'} rounded-lg px-4 py-3 text-orange-400`}
-                    >
-                      <option value="" disabled>Select a subject</option>
-                      <option value="Program Inquiry">Program Inquiry</option>
-                      <option value="Schedule Training">Schedule Training</option>
-                      <option value="Facility Rental">Facility Rental</option>
-                      <option value="Coaching Opportunity">Coaching Opportunity</option>
-                      <option value="General Question">General Question</option>
-                    </select>
-                    {errors.subject && <p className="text-red-500 text-sm mt-1">{errors.subject}</p>}
-                  </div>
-                </div>
-                <div className="mb-6">
-                  <label htmlFor="message" className="block text-white/70 mb-2">Message *</label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows={5}
-                    className={`w-full bg-white/5 border ${errors.message ? 'border-red-500' : 'border-white/10'} rounded-lg px-4 py-3 text-white`}
-                    placeholder="How can we help you?"
-                  ></textarea>
-                  {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
-                </div>
-                <div className="mb-6">
-                  <ReCAPTCHA
-                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                    onChange={(value) => setRecaptchaValue(value)}
-                  />
-                  {errors.recaptcha && <p className="text-red-500 text-sm mt-1">{errors.recaptcha}</p>}
-                </div>
-                <button type="submit" className="btn-primary w-full md:w-auto" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <Loader2 className="animate-spin mr-2" size={18} />
-                  ) : (
-                    <Send size={18} className="mr-2" />
-                  )}
-                  <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
-                </button>
-              </form>
-            </div>
-            <div className="order-1 lg:order-2">
-              <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
-              <div className="space-y-8">
+
+          <div className="glass-card rounded-xl p-8 mb-12">
+            <h2 className="text-2xl font-bold mb-8">Our Contact Details</h2>
+            <div className="lg:flex lg:gap-12">
+              {/* Left: Locations */}
+              <div className="flex-1 space-y-8">
                 <div className="flex items-start">
                   <div className="bg-afs-orange/20 p-3 rounded-lg mr-4">
                     <MapPin className="text-afs-orange" />
@@ -334,6 +164,10 @@ const Contact = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Right: Phone, Email, Hours */}
+              <div className="flex-1 space-y-8 mt-10 lg:mt-0">
                 <div className="flex items-start">
                   <div className="bg-afs-orange/20 p-3 rounded-lg mr-4">
                     <Phone className="text-afs-orange" />
@@ -343,6 +177,7 @@ const Contact = () => {
                     <p className="text-white/70">+91 72755 46210</p>
                   </div>
                 </div>
+
                 <div className="flex items-start">
                   <div className="bg-afs-orange/20 p-3 rounded-lg mr-4">
                     <Mail className="text-afs-orange" />
@@ -352,27 +187,27 @@ const Contact = () => {
                     <p className="text-white/70">afstrainingacademy@gmail.com</p>
                   </div>
                 </div>
+
                 <div className="flex items-start">
                   <div className="bg-afs-orange/20 p-3 rounded-lg mr-4">
                     <Clock className="text-afs-orange" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Working Hours</h3>
-                    <p className="text-white/70">Monday - Friday: 6:00 AM - 9:00 PM</p>
-                    <p className="text-white/70">Saturday - Sunday: 8:00 AM - 6:00 PM</p>
+                    <p className="text-white/70">Mon–Fri: 6:00 AM – 9:00 PM</p>
+                    <p className="text-white/70">Sat–Sun: 8:00 AM – 6:00 PM</p>
                   </div>
                 </div>
-              </div>
-              <div className="mt-12">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <button 
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                  <button
                     onClick={handleLiveChat}
                     className="flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg p-4 transition-colors"
                   >
                     <MessageSquare size={20} className="mr-2 text-afs-orange" />
                     <span>Live Chat</span>
                   </button>
-                  <button 
+                  <button
                     onClick={handleBookAppointment}
                     className="flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg p-4 transition-colors"
                   >
@@ -383,7 +218,8 @@ const Contact = () => {
               </div>
             </div>
           </div>
-          <div className="mt-16 rounded-xl overflow-hidden h-[600px] w-full bg-gray-800/50 border border-white/10">
+
+          <div className="rounded-xl overflow-hidden h-[600px] w-full bg-gray-800/50 border border-white/10">
             <div id="map" className="w-full h-full"></div>
           </div>
         </div>
